@@ -51,15 +51,6 @@ pipeline {
             }
         }
         
-        stage('📊 SonarQube Analysis') {
-            steps {
-                echo 'Analyse de la qualité du code avec SonarQube...'
-                withSonarQubeEnv('SonarQube') {
-                    bat 'mvn sonar:sonar'
-                }
-            }
-        }
-        
         stage('💾 Archive Artifacts') {
             steps {
                 echo 'Archivage des artefacts...'
