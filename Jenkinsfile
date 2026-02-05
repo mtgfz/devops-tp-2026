@@ -51,6 +51,13 @@ pipeline {
             }
         }
         
+        stage('📊 SonarQube Analysis') {
+    	     steps {
+        	echo 'Analyse de la qualité du code avec SonarQube...'
+        	bat 'mvn sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.host.url=http://localhost:9000 -Dsonar.login=admin -Dsonar.password=admin123'
+    }
+}
+        
         stage('💾 Archive Artifacts') {
             steps {
                 echo 'Archivage des artefacts...'
