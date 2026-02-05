@@ -10,14 +10,14 @@ pipeline {
     }
     
     stages {
-        stage(' Clone Repository') {
+        stage('📥 Clone Repository') {
             steps {
                 echo "Clonage du projet ${PROJECT_NAME}..."
                 git branch: 'main', url: 'https://github.com/mtgfz/devops-tp-2026.git'
             }
         }
         
-        stage(' Check Environment') {
+        stage('🔍 Check Environment') {
             steps {
                 echo 'Vérification de l\'environnement...'
                 bat 'java -version'
@@ -25,14 +25,14 @@ pipeline {
             }
         }
         
-        stage(' Compile') {
+        stage('🔨 Compile') {
             steps {
                 echo 'Compilation du projet...'
                 bat 'mvn clean compile'
             }
         }
         
-        stage(' Run Tests') {
+        stage('🧪 Run Tests') {
             steps {
                 echo 'Exécution des tests unitaires...'
                 bat 'mvn test'
@@ -44,14 +44,23 @@ pipeline {
             }
         }
         
-        stage(' Package') {
+        stage('📦 Package') {
             steps {
                 echo 'Création du JAR...'
                 bat 'mvn package -DskipTests'
             }
         }
         
-        stage(' Archive Artifacts') {
+        stage('📊 SonarQube Analysis') {
+            steps {
+                echo 'Analyse de la qualité du code avec SonarQube...'
+                withSonarQubeEnv('SonarQube') {
+                    bat 'mvn sonar:sonar'
+                }
+            }
+        }
+        
+        stage('💾 Archive Artifacts') {
             steps {
                 echo 'Archivage des artefacts...'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
@@ -61,21 +70,13 @@ pipeline {
     
     post {
         success {
-            echo ' Build réussi ! Le JAR a été créé avec succès.'
+            echo '✅ Build réussi ! Le JAR a été créé avec succès.'
         }
         failure {
-            echo ' Build échoué ! Consultez les logs ci-dessus.'
+            echo '❌ Build échoué ! Consultez les logs ci-dessus.'
         }
         always {
             echo "Build terminé à ${new Date()}"
         }
     }
-stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-            sh 'mvn sonar:sonar'
-        }
-    }
-}
-
 }
