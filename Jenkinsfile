@@ -70,4 +70,12 @@ pipeline {
             echo "Build terminé à ${new Date()}"
         }
     }
+stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh 'mvn sonar:sonar'
+        }
+    }
+}
+
 }
